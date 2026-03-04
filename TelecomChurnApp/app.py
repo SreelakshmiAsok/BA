@@ -25,6 +25,17 @@ def insights():
 def segmentation():
     return render_template('segmentation.html')
 
+@app.route('/settings')
+def settings():
+    # Placeholder returning a simple styled error page or redirect
+    return """
+    <div style="font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f111a; color: white;">
+        <h2 style="color: #5c6bc0;">⚙️ Model Configuration</h2>
+        <p style="color: #94a3b8; max-width: 400px; text-align: center;">Settings module is currently under development. To retrain the ML model, use the provided Jupyter Notebook.</p>
+        <a href="/" style="margin-top: 20px; padding: 10px 20px; background: #5c6bc0; color: white; text-decoration: none; border-radius: 8px;">Return to Predictor</a>
+    </div>
+    """
+
 @app.route('/predict', methods=['POST'])
 def predict():
     # Extract form data
