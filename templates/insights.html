@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights Overview - Churn Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --bg-panel: #1a1d2e;
+            --bg-input: #23273b;
+            --primary: #5c6bc0;
+            --primary-hover: #4e5ba6;
+            --accent: #ff4081;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+
+            --chart-blue: #3b82f6;
+            --chart-purple: #8b5cf6;
+            --chart-teal: #14b8a6;
+            --chart-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar container to mirror other pages exactly */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            padding: 1.5rem 0;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-link.active {
+            color: var(--text-main);
+            background: rgba(92, 107, 192, 0.1);
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--primary);
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Main Content wrapper */
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 260px);
+        }
+
+        .topbar {
+            height: 80px;
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 64, 129, 0.3);
+        }
+
+        .content-area {
+            padding: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Dashboard specific */
+        .header-section {
+            margin-bottom: 2rem;
+        }
+
+        .header-section p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .glass-panel {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .panel-heading i {
+            color: var(--primary);
+        }
+
+        /* Mock Chart Bars */
+        .chart-row {
+            margin-bottom: 1rem;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            animation: slideFill 1s ease-out forwards;
+            transform-origin: left;
+        }
+
+        .c-blue {
+            background: linear-gradient(90deg, #60a5fa, var(--chart-blue));
+        }
+
+        .c-purple {
+            background: linear-gradient(90deg, #a78bfa, var(--chart-purple));
+        }
+
+        .c-teal {
+            background: linear-gradient(90deg, #2dd4bf, var(--chart-teal));
+        }
+
+        .c-red {
+            background: linear-gradient(90deg, #f87171, var(--chart-red));
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideFill {
+            from {
+                transform: scaleX(0);
+            }
+
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        /* Key Driver Badges */
+        .driver-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .driver-badge {
+            background: rgba(92, 107, 192, 0.15);
+            border: 1px solid rgba(92, 107, 192, 0.3);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .driver-badge.high-risk {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .summary-note {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .brand h2,
+            .nav-link span {
+                display: none;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 1rem;
+            }
+
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-chart-pie"></i>
+            <h2>Churn Analytics</h2>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="/" class="nav-link">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Predictor</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/insights" class="nav-link active">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Insights Overview</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/segmentation" class="nav-link">
+                    <i class="fa-solid fa-users-viewfinder"></i>
+                    <span>Segmentation</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <h1 class="page-title">Exploratory Data Analysis</h1>
+            <div class="user-profile">
+                <span style="color: var(--text-muted); font-weight: 500;">Team 10</span>
+                <div class="avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="header-section">
+                <h2>Key Churn Drivers</h2>
+                <p>Visual presentation of trends identified during the EDA phase (Sprints 6-8) regarding disconnection
+                    from telecom services.</p>
+            </div>
+
+            <div class="insights-grid">
+
+                <!-- Chart: Churn by Contract Type -->
+                <div class="glass-panel">
+                    <div class="panel-heading">
+                        <i class="fa-solid fa-file-signature"></i> Churn by Contract Type
+                    </div>
+                    <div>
+                        <div class="chart-row">
+                            <div class="chart-labels"><span>Month-to-month</span> <span>42.7% Churn</span></div>
+                            <div class="bar-container">
+                                <div class="bar-fill c-red" style="width: 42.7%;"></div>
+                            </div>
+                        </div>
+                        <div class="chart-row">
+                            <div class="chart-labels"><span>One year</span> <span>11.2% Churn</span></div>
+                            <div class="bar-container">
+                                <div class="bar-fill c-teal" style="width: 11.2%;"></div>
+                            </div>
+                        </div>
+                        <div class="chart-row">
+                            <div class="chart-labels"><span>Two year</span> <span>2.8% Churn</span></div>
+                            <div class="bar-container">
+                                <div class="bar-fill c-blue" style="width: 2.8%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-note">
+                        Short-term billing flexibility acts as a primary catalyst for telecom disconnection.
+                        Month-to-month users represent the highest risk group.
+                    </div>
+                </div>
+
+                <!-- Chart: Tenure Buckets -->
+                <div class="glass-panel">
+                    <div class="panel-heading">
+                        <i class="fa-solid fa-calendar-days"></i> Churn Rate by Tenure
+                    </div>
+                    <div>
+                        <div class="chart-row">
+                            <div class="chart-labels"><span>0-12 Months (New)</span> <span>47.5%</span></div>
+                            <div class="bar-container">
+                                <div class="bar-fill c-red" style="width: 47.5%;"></div>
+                            </div>
+                        </div>
+                        <div class="chart-row">
+                            <div class="chart-labels"><span>13-36 Months</span> <span>29.1%</span></div>
+                            <div class="bar-container">
+                                <div class="bar-fill c-purple" style="width: 29.1%;"></div>
+                            </div>
+                        </div>
+                        <div class="chart-row">
+                            <div class="chart-labels"><span>36+ Months (Loyal)</span> <span>14.4%</span></div>
+                            <div class="bar-container">
+                                <div class="bar-fill c-blue" style="width: 14.4%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-note">
+                        The highest risk of deserting occurs within the first year of acquisition, underscoring the
+                        necessity for robust early-retention initiatives.
+                    </div>
+                </div>
+
+                <!-- Key Attributes -->
+                <div class="glass-panel" style="grid-column: 1 / -1;">
+                    <div class="panel-heading">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i> Critical Risk Attributes & Usage Patterns
+                    </div>
+
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Key attributes observed establishing strong
+                        connections with client disconnection:</p>
+
+                    <div class="driver-list">
+                        <span class="driver-badge high-risk"><i class="fa-solid fa-wifi"></i> Fiber Optic Internet
+                            (Higher Cost)</span>
+                        <span class="driver-badge high-risk"><i class="fa-solid fa-money-check"></i> High Monthly
+                            Charges</span>
+                        <span class="driver-badge high-risk"><i class="fa-solid fa-ban"></i> Lack of Online
+                            Security</span>
+                        <span class="driver-badge"><i class="fa-solid fa-user-xmark"></i> Non-Senior Citizens</span>
+                        <span class="driver-badge"><i class="fa-solid fa-file-invoice"></i> Electronic Check
+                            Payment</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                <p>&copy; 2026 Team 10 | Telecom Customer Churn Analysis</p>
+            </footer>
+        </div>
+    </main>
+</body>
+
+</html>
