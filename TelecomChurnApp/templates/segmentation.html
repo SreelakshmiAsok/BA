@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segmentation - Churn Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --bg-panel: #1a1d2e;
+            --bg-input: #23273b;
+            --primary: #5c6bc0;
+            --primary-hover: #4e5ba6;
+            --accent: #ff4081;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+
+            --risk-low: #10b981;
+            --risk-med: #f59e0b;
+            --risk-high: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar container to mirror other pages exactly */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            padding: 1.5rem 0;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-link.active {
+            color: var(--text-main);
+            background: rgba(92, 107, 192, 0.1);
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--primary);
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Main Content wrapper */
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 260px);
+        }
+
+        .topbar {
+            height: 80px;
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 64, 129, 0.3);
+        }
+
+        .content-area {
+            padding: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header-section {
+            margin-bottom: 2rem;
+        }
+
+        .header-section p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 1.05rem;
+            max-width: 800px;
+            line-height: 1.5;
+        }
+
+        .segment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .segment-card {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .segment-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .segment-card.high {
+            border-top: 5px solid var(--risk-high);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.1);
+        }
+
+        .segment-card.medium {
+            border-top: 5px solid var(--risk-med);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.1);
+        }
+
+        .segment-card.low {
+            border-top: 5px solid var(--risk-low);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+        }
+
+        .segment-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .segment-card.high .segment-icon {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--risk-high);
+        }
+
+        .segment-card.medium .segment-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--risk-med);
+        }
+
+        .segment-card.low .segment-icon {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--risk-low);
+        }
+
+        .segment-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .segment-prob {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .segment-content h4 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .feature-list i {
+            margin-top: 0.2rem;
+            color: var(--text-main);
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+
+        .retention-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+
+        .retention-box h5 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .retention-box p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .brand h2,
+            .nav-link span {
+                display: none;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 1rem;
+            }
+
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+
+            .segment-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-chart-pie"></i>
+            <h2>Churn Analytics</h2>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="/" class="nav-link">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Predictor</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/insights" class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Insights Overview</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/segmentation" class="nav-link active">
+                    <i class="fa-solid fa-users-viewfinder"></i>
+                    <span>Segmentation</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <h1 class="page-title">Risk Segmentation Breakdown</h1>
+            <div class="user-profile">
+                <span style="color: var(--text-muted); font-weight: 500;">Team 10</span>
+                <div class="avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="header-section">
+                <h2>Customer Risk Tiers</h2>
+                <p>Following Sprint 10 objectives, customers are segmented into corresponding risk categories (High,
+                    Medium, Low) based on the logistic regression probability output. This allows the Business Analysts
+                    to design and deploy targeted retention actions.</p>
+            </div>
+
+            <div class="segment-grid">
+
+                <!-- High Risk -->
+                <div class="segment-card high">
+                    <div class="segment-icon"><i class="fa-solid fa-skull-crossbones"></i></div>
+                    <div>
+                        <h3 class="segment-title">High Risk</h3>
+                        <p class="segment-prob">Probability > 70%</p>
+                    </div>
+
+                    <div class="segment-content">
+                        <h4>Typical Profile Characteristics</h4>
+                        <ul class="feature-list">
+                            <li><i class="fa-solid fa-check"></i> Month-to-month contracts</li>
+                            <li><i class="fa-solid fa-check"></i> Very short tenure (often < 6 months)</li>
+                            <li><i class="fa-solid fa-check"></i> Experiencing high monthly charges</li>
+                            <li><i class="fa-solid fa-check"></i> Frequently missing value-add services like Tech
+                                Support or Securtiy</li>
+                        </ul>
+                    </div>
+
+                    <div class="retention-box">
+                        <h5><i class="fa-solid fa-bullhorn" style="color: var(--risk-high)"></i> Urgent Action Required
+                        </h5>
+                        <p>Deploy immediate targeted discount offers (15-20% off next 3 months) or mandate proactive
+                            outreach from Customer Success within 24 hours to address root service grievances.</p>
+                    </div>
+                </div>
+
+                <!-- Medium Risk -->
+                <div class="segment-card medium">
+                    <div class="segment-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div>
+                        <h3 class="segment-title">Medium Risk</h3>
+                        <p class="segment-prob">Probability 30% - 70%</p>
+                    </div>
+
+                    <div class="segment-content">
+                        <h4>Typical Profile Characteristics</h4>
+                        <ul class="feature-list">
+                            <li><i class="fa-solid fa-check"></i> Uncommitted to long term but past initial drop-off
+                                point</li>
+                            <li><i class="fa-solid fa-check"></i> Moderately satisfied but highly price sensitive</li>
+                            <li><i class="fa-solid fa-check"></i> Often using basic services without bundles</li>
+                        </ul>
+                    </div>
+
+                    <div class="retention-box">
+                        <h5><i class="fa-solid fa-magnet" style="color: var(--risk-med)"></i> Increase Lock-in</h5>
+                        <p>Incentivize structural changes. Offer free trial upgrades to premium services
+                            (Streaming/Security) to build dependency, or offer one-time rebates to migrate to 1-Year
+                            contracts.</p>
+                    </div>
+                </div>
+
+                <!-- Low Risk -->
+                <div class="segment-card low">
+                    <div class="segment-icon"><i class="fa-solid fa-shield-heart"></i></div>
+                    <div>
+                        <h3 class="segment-title">Low Risk</h3>
+                        <p class="segment-prob">Probability < 30%</p>
+                    </div>
+
+                    <div class="segment-content">
+                        <h4>Typical Profile Characteristics</h4>
+                        <ul class="feature-list">
+                            <li><i class="fa-solid fa-check"></i> Long-term tenure (Loyal customers)</li>
+                            <li><i class="fa-solid fa-check"></i> Locked into One or Two-Year contracts</li>
+                            <li><i class="fa-solid fa-check"></i> Often subscribed to multiple bundled services</li>
+                            <li><i class="fa-solid fa-check"></i> Automated payment methods</li>
+                        </ul>
+                    </div>
+
+                    <div class="retention-box">
+                        <h5><i class="fa-solid fa-arrow-up-right-dots" style="color: var(--risk-low)"></i> Maximize
+                            Value</h5>
+                        <p>No churn-prevention needed. Enroll in standard VIP loyalty programs to foster referrals and
+                            focus standard marketing on cross-selling higher tier service expansions safely.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer style="text-align: center; margin-top: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+                <p>&copy; 2026 Team 10 | Telecom Customer Churn Analysis</p>
+            </footer>
+        </div>
+    </main>
+</body>
+
+</html>
