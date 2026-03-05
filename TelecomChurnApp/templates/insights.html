@@ -5,25 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Insights Overview - Churn Analytics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #0f111a;
-            --bg-panel: #1a1d2e;
-            --bg-input: #23273b;
-            --primary: #5c6bc0;
-            --primary-hover: #4e5ba6;
-            --accent: #ff4081;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.08);
+            /* Clean Minimalist Palette */
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
 
+            /* Chart Colors */
             --chart-blue: #3b82f6;
             --chart-purple: #8b5cf6;
             --chart-teal: #14b8a6;
             --chart-red: #ef4444;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
         * {
@@ -33,18 +37,21 @@
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
             display: flex;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Sidebar container to mirror other pages exactly */
+        /* Sidebar */
         .sidebar {
             width: 260px;
-            background-color: var(--bg-panel);
+            background: var(--bg-surface);
             border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
             position: fixed;
             height: 100vh;
             left: 0;
@@ -61,60 +68,51 @@
         }
 
         .brand i {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: var(--primary);
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .brand h2 {
             font-size: 1.25rem;
             font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
         }
 
         .nav-menu {
             padding: 1.5rem 0;
             list-style: none;
+            flex-grow: 1;
         }
 
         .nav-link {
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 1rem 1.5rem;
+            padding: 0.875rem 1.5rem;
             color: var(--text-muted);
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all 0.2s ease;
+            margin: 0.25rem 1rem;
+            border-radius: 8px;
         }
 
         .nav-link i {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             width: 24px;
             text-align: center;
         }
 
         .nav-link:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.03);
+            color: var(--primary);
+            background: var(--primary-light);
         }
 
         .nav-link.active {
-            color: var(--text-main);
-            background: rgba(92, 107, 192, 0.1);
-        }
-
-        .nav-link.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background-color: var(--primary);
-            border-radius: 0 4px 4px 0;
+            color: var(--primary);
+            background: var(--primary-light);
+            font-weight: 600;
         }
 
         /* Main Content wrapper */
@@ -127,21 +125,23 @@
         }
 
         .topbar {
-            height: 80px;
-            background-color: var(--bg-panel);
+            height: 70px;
+            background: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 2rem;
+            padding: 0 2.5rem;
             position: sticky;
             top: 0;
             z-index: 90;
         }
 
         .page-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
         }
 
         .user-profile {
@@ -151,16 +151,16 @@
         }
 
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: var(--primary-light);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 4px 10px rgba(255, 64, 129, 0.3);
+            font-size: 1rem;
+            color: var(--primary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
         }
 
         .content-area {
@@ -173,41 +173,59 @@
         /* Dashboard specific */
         .header-section {
             margin-bottom: 2rem;
+            animation: slideUpFade 0.3s ease forwards;
+        }
+
+        .header-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
         .header-section p {
             color: var(--text-muted);
-            margin-top: 0.5rem;
-            font-size: 1.05rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            max-width: 800px;
         }
 
         .insights-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
+            gap: 1.5rem;
             margin-bottom: 2rem;
-            animation: fadeIn 0.6s ease-out forwards;
         }
 
-        .glass-panel {
-            background-color: var(--bg-panel);
+        .card-panel {
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            animation: slideUpFade 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .card-panel:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .card-panel:nth-child(3) {
+            animation-delay: 0.2s;
         }
 
         .panel-heading {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 1rem;
+            color: var(--text-main);
         }
 
         .panel-heading i {
@@ -223,52 +241,46 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             color: var(--text-muted);
             font-weight: 500;
         }
 
+        .chart-labels span:last-child {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
         .bar-container {
             width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
+            height: 8px;
+            background: var(--bg-base);
+            border-radius: 4px;
             overflow: hidden;
+            border: 1px solid var(--border-color);
         }
 
         .bar-fill {
             height: 100%;
-            border-radius: 6px;
+            border-radius: 4px;
             animation: slideFill 1s ease-out forwards;
             transform-origin: left;
         }
 
         .c-blue {
-            background: linear-gradient(90deg, #60a5fa, var(--chart-blue));
+            background: var(--chart-blue);
         }
 
         .c-purple {
-            background: linear-gradient(90deg, #a78bfa, var(--chart-purple));
+            background: var(--chart-purple);
         }
 
         .c-teal {
-            background: linear-gradient(90deg, #2dd4bf, var(--chart-teal));
+            background: var(--chart-teal);
         }
 
         .c-red {
-            background: linear-gradient(90deg, #f87171, var(--chart-red));
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            background: var(--chart-red);
         }
 
         @keyframes slideFill {
@@ -286,15 +298,16 @@
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
+            margin-top: 0.5rem;
         }
 
         .driver-badge {
-            background: rgba(92, 107, 192, 0.15);
-            border: 1px solid rgba(92, 107, 192, 0.3);
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
@@ -302,18 +315,40 @@
         }
 
         .driver-badge.high-risk {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: rgba(239, 68, 68, 0.3);
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #991b1b;
+        }
+
+        .driver-badge.high-risk i {
+            color: var(--chart-red);
+        }
+
+        .driver-badge i {
+            color: var(--primary);
         }
 
         .summary-note {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 1.5rem;
-            border-radius: 12px;
+            background: var(--primary-light);
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
             border-left: 4px solid var(--primary);
-            color: var(--text-muted);
-            font-size: 0.95rem;
+            color: #1e40af;
+            font-size: 0.9rem;
             line-height: 1.5;
+            margin-top: auto;
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 1024px) {
@@ -328,7 +363,8 @@
 
             .nav-link {
                 justify-content: center;
-                padding: 1rem;
+                margin: 0.25rem;
+                padding: 0.875rem;
             }
 
             .main-content {
@@ -369,6 +405,7 @@
                     <span>Segmentation</span>
                 </a>
             </li>
+
         </ul>
     </aside>
 
@@ -377,7 +414,7 @@
         <header class="topbar">
             <h1 class="page-title">Exploratory Data Analysis</h1>
             <div class="user-profile">
-                <span style="color: var(--text-muted); font-weight: 500;">Team 10</span>
+                <span style="color: var(--text-muted); font-size: 0.875rem; font-weight: 500;">Team 10</span>
                 <div class="avatar"><i class="fa-solid fa-user-astronaut"></i></div>
             </div>
         </header>
@@ -392,25 +429,25 @@
             <div class="insights-grid">
 
                 <!-- Chart: Churn by Contract Type -->
-                <div class="glass-panel">
+                <div class="card-panel">
                     <div class="panel-heading">
                         <i class="fa-solid fa-file-signature"></i> Churn by Contract Type
                     </div>
                     <div>
                         <div class="chart-row">
-                            <div class="chart-labels"><span>Month-to-month</span> <span>42.7% Churn</span></div>
+                            <div class="chart-labels"><span>Month-to-month</span> <span>42.7%</span></div>
                             <div class="bar-container">
                                 <div class="bar-fill c-red" style="width: 42.7%;"></div>
                             </div>
                         </div>
                         <div class="chart-row">
-                            <div class="chart-labels"><span>One year</span> <span>11.2% Churn</span></div>
+                            <div class="chart-labels"><span>One year</span> <span>11.2%</span></div>
                             <div class="bar-container">
                                 <div class="bar-fill c-teal" style="width: 11.2%;"></div>
                             </div>
                         </div>
                         <div class="chart-row">
-                            <div class="chart-labels"><span>Two year</span> <span>2.8% Churn</span></div>
+                            <div class="chart-labels"><span>Two year</span> <span>2.8%</span></div>
                             <div class="bar-container">
                                 <div class="bar-fill c-blue" style="width: 2.8%;"></div>
                             </div>
@@ -423,7 +460,7 @@
                 </div>
 
                 <!-- Chart: Tenure Buckets -->
-                <div class="glass-panel">
+                <div class="card-panel">
                     <div class="panel-heading">
                         <i class="fa-solid fa-calendar-days"></i> Churn Rate by Tenure
                     </div>
@@ -454,30 +491,30 @@
                 </div>
 
                 <!-- Key Attributes -->
-                <div class="glass-panel" style="grid-column: 1 / -1;">
+                <div class="card-panel" style="grid-column: 1 / -1;">
                     <div class="panel-heading">
                         <i class="fa-solid fa-magnifying-glass-chart"></i> Critical Risk Attributes & Usage Patterns
                     </div>
 
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">Key attributes observed establishing strong
-                        connections with client disconnection:</p>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.5rem;">Key attributes
+                        connected closely with client disconnection:</p>
 
                     <div class="driver-list">
-                        <span class="driver-badge high-risk"><i class="fa-solid fa-wifi"></i> Fiber Optic Internet
-                            (Higher Cost)</span>
+                        <span class="driver-badge high-risk"><i class="fa-solid fa-wifi"></i> Fiber Optic
+                            Internet</span>
                         <span class="driver-badge high-risk"><i class="fa-solid fa-money-check"></i> High Monthly
                             Charges</span>
-                        <span class="driver-badge high-risk"><i class="fa-solid fa-ban"></i> Lack of Online
+                        <span class="driver-badge high-risk"><i class="fa-solid fa-shield-halved"></i> No Online
                             Security</span>
-                        <span class="driver-badge"><i class="fa-solid fa-user-xmark"></i> Non-Senior Citizens</span>
-                        <span class="driver-badge"><i class="fa-solid fa-file-invoice"></i> Electronic Check
-                            Payment</span>
+                        <span class="driver-badge"><i class="fa-solid fa-person-cane"></i> Non-Senior Citizens</span>
+                        <span class="driver-badge"><i class="fa-solid fa-file-invoice-dollar"></i> Electronic
+                            Check</span>
                     </div>
                 </div>
 
             </div>
 
-            <footer style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+            <footer style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.875rem;">
                 <p>&copy; 2026 Team 10 | Telecom Customer Churn Analysis</p>
             </footer>
         </div>

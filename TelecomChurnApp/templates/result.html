@@ -5,24 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prediction Results - Churn Analytics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #0f111a;
-            --bg-panel: #1a1d2e;
-            --bg-input: #23273b;
-            --primary: #5c6bc0;
-            --primary-hover: #4e5ba6;
-            --accent: #ff4081;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.08);
+            /* Clean Minimalist Palette */
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
 
             --risk-low: #10b981;
             --risk-med: #f59e0b;
             --risk-high: #ef4444;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
         }
 
         * {
@@ -32,18 +40,18 @@
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
             display: flex;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Sidebar Styles (identical to index.html) */
+        /* Sidebar */
         .sidebar {
             width: 260px;
-            background-color: var(--bg-panel);
+            background: var(--bg-surface);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
@@ -63,16 +71,15 @@
         }
 
         .brand i {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: var(--primary);
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .brand h2 {
             font-size: 1.25rem;
             font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
         }
 
         .nav-menu {
@@ -81,31 +88,34 @@
             flex-grow: 1;
         }
 
-        .nav-item {
-            margin-bottom: 0.5rem;
-        }
-
         .nav-link {
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 1rem 1.5rem;
+            padding: 0.875rem 1.5rem;
             color: var(--text-muted);
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all 0.2s ease;
+            margin: 0.25rem 1rem;
+            border-radius: 8px;
         }
 
         .nav-link i {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             width: 24px;
             text-align: center;
         }
 
         .nav-link:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.03);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            background: var(--primary-light);
+            font-weight: 600;
         }
 
         /* Main Content */
@@ -118,21 +128,23 @@
         }
 
         .topbar {
-            height: 80px;
-            background-color: var(--bg-panel);
+            height: 70px;
+            background: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 2rem;
+            padding: 0 2.5rem;
             position: sticky;
             top: 0;
             z-index: 90;
         }
 
         .page-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
         }
 
         .user-profile {
@@ -142,17 +154,16 @@
         }
 
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: var(--primary-light);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: white;
-            box-shadow: 0 4px 10px rgba(255, 64, 129, 0.3);
+            font-size: 1rem;
+            color: var(--primary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
         }
 
         .content-area {
@@ -168,17 +179,16 @@
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin-bottom: 2rem;
-            animation: slideUp 0.6s ease-out forwards;
+            animation: slideUpFade 0.5s ease forwards;
         }
 
-        .glass-panel {
-            background-color: var(--bg-panel);
+        .card-panel {
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 2.5rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-sm);
             position: relative;
-            overflow: hidden;
         }
 
         /* Risk Gauge Card */
@@ -192,8 +202,8 @@
 
         .gauge-container {
             position: relative;
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
             margin: 1.5rem 0;
             display: flex;
             align-items: center;
@@ -209,7 +219,7 @@
 
         .circle-bg {
             fill: none;
-            stroke: rgba(255, 255, 255, 0.05);
+            stroke: var(--border-color);
             stroke-width: 3.8;
         }
 
@@ -217,7 +227,7 @@
             fill: none;
             stroke-width: 2.8;
             stroke-linecap: round;
-            animation: progress 1s ease-out forwards;
+            animation: progress 1.5s ease-out forwards;
         }
 
         @keyframes progress {
@@ -231,7 +241,7 @@
             font-family: inherit;
             font-size: 0.5em;
             text-anchor: middle;
-            font-weight: 800;
+            font-weight: 700;
         }
 
         .gauge-label {
@@ -248,11 +258,11 @@
             gap: 0.5rem;
             padding: 0.5rem 1.25rem;
             border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
+            font-weight: 600;
+            font-size: 1rem;
             margin-top: 1rem;
-            letter-spacing: 0.5px;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         /* Dynamic classes populated via jinja */
@@ -261,12 +271,12 @@
         }
 
         .theme-low .risk-badge {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--risk-low);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: #d1fae5;
+            color: #047857;
+            border: 1px solid #10b981;
         }
 
-        .theme-low .glass-panel-accent {
+        .theme-low .card-panel.risk-card {
             border-top: 4px solid var(--risk-low);
         }
 
@@ -275,12 +285,12 @@
         }
 
         .theme-medium .risk-badge {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--risk-med);
-            border: 1px solid rgba(245, 158, 11, 0.3);
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #f59e0b;
         }
 
-        .theme-medium .glass-panel-accent {
+        .theme-medium .card-panel.risk-card {
             border-top: 4px solid var(--risk-med);
         }
 
@@ -289,18 +299,18 @@
         }
 
         .theme-high .risk-badge {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--risk-high);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #ef4444;
         }
 
-        .theme-high .glass-panel-accent {
+        .theme-high .card-panel.risk-card {
             border-top: 4px solid var(--risk-high);
         }
 
         /* Customer Summary */
         .summary-title {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
             display: flex;
@@ -308,6 +318,7 @@
             gap: 0.75rem;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 0.75rem;
+            color: var(--text-main);
         }
 
         .summary-title i {
@@ -317,46 +328,42 @@
         .summary-list {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.875rem;
         }
 
         .summary-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem;
+            padding: 0.875rem 1rem;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: background 0.2s;
-        }
-
-        .summary-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
         }
 
         .summary-label {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.875rem;
             font-weight: 500;
         }
 
         .summary-val {
             font-weight: 600;
             color: var(--text-main);
+            font-size: 0.95rem;
         }
 
         /* Recommendations Section */
         .strategy-panel {
             grid-column: 1 / -1;
-            background: linear-gradient(to right, rgba(92, 107, 192, 0.1), rgba(26, 29, 46, 0.9));
-            animation: slideUp 0.6s ease-out 0.2s forwards;
+            background: var(--bg-surface);
+            animation: slideUpFade 0.5s ease 0.2s forwards;
             opacity: 0;
         }
 
         .strategy-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
             margin-top: 1.5rem;
         }
@@ -364,7 +371,7 @@
         .strategy-item {
             display: flex;
             gap: 1.25rem;
-            background: var(--bg-input);
+            background: var(--bg-base);
             padding: 1.5rem;
             border-radius: 12px;
             border: 1px solid var(--border-color);
@@ -373,46 +380,47 @@
         .strategy-icon {
             width: 48px;
             height: 48px;
-            border-radius: 12px;
-            background: rgba(92, 107, 192, 0.2);
+            border-radius: 10px;
+            background: var(--primary-light);
             color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             flex-shrink: 0;
         }
 
         .strategy-content h4 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             margin-bottom: 0.5rem;
             font-weight: 600;
+            color: var(--text-main);
         }
 
         .strategy-content p {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.5;
         }
 
         .action-bar {
             display: flex;
             justify-content: center;
-            margin-top: 2.5rem;
-            animation: slideUp 0.6s ease-out 0.4s forwards;
+            margin-top: 2rem;
+            animation: slideUpFade 0.5s ease 0.3s forwards;
             opacity: 0;
         }
 
         .btn-back {
-            background: var(--bg-input);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
             font-weight: 600;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 0.75rem;
@@ -420,14 +428,15 @@
         }
 
         .btn-back:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-md);
         }
 
-        @keyframes slideUp {
+        @keyframes slideUpFade {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
 
             to {
@@ -451,7 +460,8 @@
 
             .nav-link {
                 justify-content: center;
-                padding: 1rem;
+                margin: 0.25rem;
+                padding: 0.875rem;
             }
 
             .main-content {
@@ -464,15 +474,23 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
+
+            .content-area {
+                padding: 1.5rem;
+            }
+
+            .card-panel {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 
 {% set prob_percent = (probability * 100) | round(1) %}
 {% if prob_percent < 30 %} {% set risk_theme="theme-low" %} {% set risk_label="Low Risk" %} {% set
-    risk_icon="fa-shield-heart" %} {% elif prob_percent < 70 %} {% set risk_theme="theme-medium" %} {% set
+    risk_icon="fa-shield-check" %} {% elif prob_percent < 70 %} {% set risk_theme="theme-medium" %} {% set
     risk_label="Medium Risk" %} {% set risk_icon="fa-triangle-exclamation" %} {% else %} {% set risk_theme="theme-high"
-    %} {% set risk_label="High Risk" %} {% set risk_icon="fa-skull-crossbones" %} {% endif %} <body
+    %} {% set risk_label="High Risk" %} {% set risk_icon="fa-circle-exclamation" %} {% endif %} <body
     class="{{ risk_theme }}">
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -499,12 +517,7 @@
                     <span>Segmentation</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="/settings" class="nav-link">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                </a>
-            </li>
+
         </ul>
     </aside>
 
@@ -513,7 +526,7 @@
         <header class="topbar">
             <h1 class="page-title">Prediction Results</h1>
             <div class="user-profile">
-                <span style="color: var(--text-muted); font-weight: 500;">Team 10</span>
+                <span style="color: var(--text-muted); font-size: 0.875rem; font-weight: 500;">Team 10</span>
                 <div class="avatar"><i class="fa-solid fa-user-astronaut"></i></div>
             </div>
         </header>
@@ -522,7 +535,7 @@
 
             <div class="dashboard-grid">
                 <!-- Risk Gauge -->
-                <div class="glass-panel glass-panel-accent risk-card">
+                <div class="card-panel risk-card">
                     <h2 class="summary-title" style="border:none; margin-bottom: 0;">Predicted Churn Probability</h2>
 
                     <div class="gauge-container">
@@ -544,9 +557,9 @@
                 </div>
 
                 <!-- Customer Summary -->
-                <div class="glass-panel glass-panel-accent">
+                <div class="card-panel">
                     <h2 class="summary-title">
-                        <i class="fa-solid fa-user-tag"></i> Profile Profile Summary
+                        <i class="fa-solid fa-user-tag"></i> Profile Summary
                     </h2>
 
                     <div class="summary-list">
@@ -574,24 +587,27 @@
                 </div>
 
                 <!-- Business Retention Strategies -->
-                <div class="glass-panel strategy-panel">
-                    <h2 class="summary-title" style="border-bottom-color: rgba(255,255,255,0.1);">
+                <div class="card-panel strategy-panel">
+                    <h2 class="summary-title">
                         <i class="fa-solid fa-lightbulb"></i> Recommended Business Actions
                     </h2>
-                    <p style="color: var(--text-muted); margin-bottom: 1rem;">Based on the customer's risk profile and
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">Based on the
+                        customer's risk profile and
                         service history, Team 10 recommends the following retention strategies:</p>
 
                     <div class="strategy-list">
                         {% if prob_percent >= 70 %}
                         <div class="strategy-item">
-                            <div class="strategy-icon"><i class="fa-solid fa-tag"></i></div>
+                            <div class="strategy-icon" style="color: var(--danger); background: #fee2e2;"><i
+                                    class="fa-solid fa-tag"></i></div>
                             <div class="strategy-content">
                                 <h4>Immediate Discount Offer</h4>
                                 <p>Offer a 15-20% discount on the next 3 months to prevent immediate churn.</p>
                             </div>
                         </div>
                         <div class="strategy-item">
-                            <div class="strategy-icon"><i class="fa-solid fa-headset"></i></div>
+                            <div class="strategy-icon" style="color: var(--danger); background: #fee2e2;"><i
+                                    class="fa-solid fa-headset"></i></div>
                             <div class="strategy-content">
                                 <h4>Proactive Reach Out</h4>
                                 <p>Customer Success team to contact within 24 hours to resolve any underlying
@@ -600,7 +616,8 @@
                         </div>
                         {% elif prob_percent >= 30 %}
                         <div class="strategy-item">
-                            <div class="strategy-icon"><i class="fa-solid fa-box-open"></i></div>
+                            <div class="strategy-icon" style="color: var(--warning); background: #fef3c7;"><i
+                                    class="fa-solid fa-box-open"></i></div>
                             <div class="strategy-content">
                                 <h4>Service Bundle Upgrade</h4>
                                 <p>Offer a free upgrade to streaming services or online security to increase lock-in.
@@ -608,7 +625,8 @@
                             </div>
                         </div>
                         <div class="strategy-item">
-                            <div class="strategy-icon"><i class="fa-solid fa-file-signature"></i></div>
+                            <div class="strategy-icon" style="color: var(--warning); background: #fef3c7;"><i
+                                    class="fa-solid fa-file-signature"></i></div>
                             <div class="strategy-content">
                                 <h4>Contract Extension Promos</h4>
                                 <p>Incentivize switching from Month-to-Month to a One-Year contract with a one-time
@@ -617,7 +635,8 @@
                         </div>
                         {% else %}
                         <div class="strategy-item">
-                            <div class="strategy-icon"><i class="fa-solid fa-gem"></i></div>
+                            <div class="strategy-icon" style="color: var(--success); background: #d1fae5;"><i
+                                    class="fa-solid fa-gem"></i></div>
                             <div class="strategy-content">
                                 <h4>Loyalty Program</h4>
                                 <p>Enroll in standard loyalty program to maintain high satisfaction and encourage
@@ -625,7 +644,8 @@
                             </div>
                         </div>
                         <div class="strategy-item">
-                            <div class="strategy-icon"><i class="fa-solid fa-arrow-up-right-dots"></i></div>
+                            <div class="strategy-icon" style="color: var(--success); background: #d1fae5;"><i
+                                    class="fa-solid fa-arrow-up-right-dots"></i></div>
                             <div class="strategy-content">
                                 <h4>Cross-Selling Opportunities</h4>
                                 <p>Low churn risk allows for standard upselling of premium channels or device
@@ -644,7 +664,7 @@
                 </a>
             </div>
 
-            <footer style="text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.9rem;">
+            <footer style="text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.875rem;">
                 <p>&copy; 2026 Team 10 | Telecom Customer Churn Analysis</p>
             </footer>
         </div>

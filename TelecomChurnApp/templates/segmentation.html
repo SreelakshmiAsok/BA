@@ -5,24 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Segmentation - Churn Analytics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #0f111a;
-            --bg-panel: #1a1d2e;
-            --bg-input: #23273b;
-            --primary: #5c6bc0;
-            --primary-hover: #4e5ba6;
-            --accent: #ff4081;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.08);
+            /* Clean Minimalist Palette */
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
 
+            /* Risk Colors */
             --risk-low: #10b981;
             --risk-med: #f59e0b;
             --risk-high: #ef4444;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
         }
 
         * {
@@ -32,18 +37,21 @@
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
             display: flex;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Sidebar container to mirror other pages exactly */
+        /* Sidebar */
         .sidebar {
             width: 260px;
-            background-color: var(--bg-panel);
+            background: var(--bg-surface);
             border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
             position: fixed;
             height: 100vh;
             left: 0;
@@ -60,63 +68,54 @@
         }
 
         .brand i {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: var(--primary);
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .brand h2 {
             font-size: 1.25rem;
             font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
         }
 
         .nav-menu {
             padding: 1.5rem 0;
             list-style: none;
+            flex-grow: 1;
         }
 
         .nav-link {
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 1rem 1.5rem;
+            padding: 0.875rem 1.5rem;
             color: var(--text-muted);
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all 0.2s ease;
+            margin: 0.25rem 1rem;
+            border-radius: 8px;
         }
 
         .nav-link i {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             width: 24px;
             text-align: center;
         }
 
         .nav-link:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.03);
+            color: var(--primary);
+            background: var(--primary-light);
         }
 
         .nav-link.active {
-            color: var(--text-main);
-            background: rgba(92, 107, 192, 0.1);
+            color: var(--primary);
+            background: var(--primary-light);
+            font-weight: 600;
         }
 
-        .nav-link.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background-color: var(--primary);
-            border-radius: 0 4px 4px 0;
-        }
-
-        /* Main Content wrapper */
+        /* Main Content */
         .main-content {
             margin-left: 260px;
             flex-grow: 1;
@@ -126,21 +125,23 @@
         }
 
         .topbar {
-            height: 80px;
-            background-color: var(--bg-panel);
+            height: 70px;
+            background: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 2rem;
+            padding: 0 2.5rem;
             position: sticky;
             top: 0;
             z-index: 90;
         }
 
         .page-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
         }
 
         .user-profile {
@@ -150,16 +151,16 @@
         }
 
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: var(--primary-light);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 4px 10px rgba(255, 64, 129, 0.3);
+            font-size: 1rem;
+            color: var(--primary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
         }
 
         .content-area {
@@ -171,12 +172,18 @@
 
         .header-section {
             margin-bottom: 2rem;
+            animation: slideUpFade 0.3s ease forwards;
+        }
+
+        .header-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
         .header-section p {
             color: var(--text-muted);
-            margin-top: 0.5rem;
-            font-size: 1.05rem;
+            font-size: 1rem;
             max-width: 800px;
             line-height: 1.5;
         }
@@ -185,85 +192,90 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
-            animation: fadeIn 0.6s ease-out forwards;
         }
 
         .segment-card {
-            background-color: var(--bg-panel);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: slideUpFade 0.5s ease forwards;
+            opacity: 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .segment-card:nth-child(1) {
+            animation-delay: 0.1s;
+            border-top: 4px solid var(--risk-high);
+        }
+
+        .segment-card:nth-child(2) {
+            animation-delay: 0.2s;
+            border-top: 4px solid var(--risk-med);
+        }
+
+        .segment-card:nth-child(3) {
+            animation-delay: 0.3s;
+            border-top: 4px solid var(--risk-low);
         }
 
         .segment-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .segment-card.high {
-            border-top: 5px solid var(--risk-high);
-            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.1);
-        }
-
-        .segment-card.medium {
-            border-top: 5px solid var(--risk-med);
-            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.1);
-        }
-
-        .segment-card.low {
-            border-top: 5px solid var(--risk-low);
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
         }
 
         .segment-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 1.5rem;
             margin-bottom: 0.5rem;
         }
 
         .segment-card.high .segment-icon {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--risk-high);
+            background: #fee2e2;
+            color: #b91c1c;
         }
 
         .segment-card.medium .segment-icon {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--risk-med);
+            background: #fef3c7;
+            color: #b45309;
         }
 
         .segment-card.low .segment-icon {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--risk-low);
+            background: #d1fae5;
+            color: #047857;
         }
 
         .segment-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--text-main);
+            margin-bottom: 0.25rem;
         }
 
         .segment-prob {
             color: var(--text-muted);
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .segment-content h4 {
-            font-size: 1.1rem;
-            color: var(--primary);
+            font-size: 1rem;
+            color: var(--text-main);
             margin-bottom: 1rem;
+            font-weight: 600;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.75rem;
         }
 
         .feature-list {
@@ -279,21 +291,21 @@
             align-items: flex-start;
             gap: 0.75rem;
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.4;
         }
 
         .feature-list i {
-            margin-top: 0.2rem;
-            color: var(--text-main);
+            margin-top: 0.15rem;
+            color: var(--primary);
             font-size: 0.8rem;
-            opacity: 0.5;
         }
 
         .retention-box {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
             margin-top: auto;
         }
 
@@ -301,18 +313,31 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 1rem;
-            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
             color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .segment-card.high .retention-box h5 i {
+            color: var(--risk-high);
+        }
+
+        .segment-card.medium .retention-box h5 i {
+            color: var(--risk-med);
+        }
+
+        .segment-card.low .retention-box h5 i {
+            color: var(--risk-low);
         }
 
         .retention-box p {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             line-height: 1.5;
         }
 
-        @keyframes fadeIn {
+        @keyframes slideUpFade {
             from {
                 opacity: 0;
                 transform: translateY(20px);
@@ -336,7 +361,8 @@
 
             .nav-link {
                 justify-content: center;
-                padding: 1rem;
+                margin: 0.25rem 0.5rem;
+                padding: 0.875rem;
             }
 
             .main-content {
@@ -377,6 +403,7 @@
                     <span>Segmentation</span>
                 </a>
             </li>
+
         </ul>
     </aside>
 
@@ -385,7 +412,7 @@
         <header class="topbar">
             <h1 class="page-title">Risk Segmentation Breakdown</h1>
             <div class="user-profile">
-                <span style="color: var(--text-muted); font-weight: 500;">Team 10</span>
+                <span style="color: var(--text-muted); font-size: 0.875rem; font-weight: 500;">Team 10</span>
                 <div class="avatar"><i class="fa-solid fa-user-astronaut"></i></div>
             </div>
         </header>
@@ -394,8 +421,7 @@
             <div class="header-section">
                 <h2>Customer Risk Tiers</h2>
                 <p>Following Sprint 10 objectives, customers are segmented into corresponding risk categories (High,
-                    Medium, Low) based on the logistic regression probability output. This allows the Business Analysts
-                    to design and deploy targeted retention actions.</p>
+                    Medium, Low) based on the logistic regression probability output.</p>
             </div>
 
             <div class="segment-grid">
@@ -415,15 +441,14 @@
                             <li><i class="fa-solid fa-check"></i> Very short tenure (often < 6 months)</li>
                             <li><i class="fa-solid fa-check"></i> Experiencing high monthly charges</li>
                             <li><i class="fa-solid fa-check"></i> Frequently missing value-add services like Tech
-                                Support or Securtiy</li>
+                                Support</li>
                         </ul>
                     </div>
 
                     <div class="retention-box">
-                        <h5><i class="fa-solid fa-bullhorn" style="color: var(--risk-high)"></i> Urgent Action Required
-                        </h5>
+                        <h5><i class="fa-solid fa-bullhorn"></i> Urgent Action Required</h5>
                         <p>Deploy immediate targeted discount offers (15-20% off next 3 months) or mandate proactive
-                            outreach from Customer Success within 24 hours to address root service grievances.</p>
+                            outreach from Customer Success.</p>
                     </div>
                 </div>
 
@@ -446,10 +471,9 @@
                     </div>
 
                     <div class="retention-box">
-                        <h5><i class="fa-solid fa-magnet" style="color: var(--risk-med)"></i> Increase Lock-in</h5>
+                        <h5><i class="fa-solid fa-magnet"></i> Increase Lock-in</h5>
                         <p>Incentivize structural changes. Offer free trial upgrades to premium services
-                            (Streaming/Security) to build dependency, or offer one-time rebates to migrate to 1-Year
-                            contracts.</p>
+                            (Streaming/Security) to build dependency.</p>
                     </div>
                 </div>
 
@@ -458,7 +482,7 @@
                     <div class="segment-icon"><i class="fa-solid fa-shield-heart"></i></div>
                     <div>
                         <h3 class="segment-title">Low Risk</h3>
-                        <p class="segment-prob">Probability < 30%</p>
+                        <p class="segment-prob">Probability &lt; 30%</p>
                     </div>
 
                     <div class="segment-content">
@@ -472,16 +496,15 @@
                     </div>
 
                     <div class="retention-box">
-                        <h5><i class="fa-solid fa-arrow-up-right-dots" style="color: var(--risk-low)"></i> Maximize
-                            Value</h5>
+                        <h5><i class="fa-solid fa-arrow-up-right-dots"></i> Maximize Value</h5>
                         <p>No churn-prevention needed. Enroll in standard VIP loyalty programs to foster referrals and
-                            focus standard marketing on cross-selling higher tier service expansions safely.</p>
+                            focus on cross-selling.</p>
                     </div>
                 </div>
 
             </div>
 
-            <footer style="text-align: center; margin-top: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+            <footer style="text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.875rem;">
                 <p>&copy; 2026 Team 10 | Telecom Customer Churn Analysis</p>
             </footer>
         </div>
