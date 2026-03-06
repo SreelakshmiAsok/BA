@@ -17,9 +17,16 @@ with open('columns.pkl', 'rb') as f:
 def home():
     return render_template('index.html')
 
+import json
+
 @app.route('/insights')
 def insights():
-    return render_template('insights.html')
+    try:
+        with open('metrics.json', 'r') as f:
+            metrics = json.load(f)
+    except FileNotFoundError:
+        metrics = None
+    return render_template('insights.html', metrics=metrics)
 
 @app.route('/segmentation')
 def segmentation():

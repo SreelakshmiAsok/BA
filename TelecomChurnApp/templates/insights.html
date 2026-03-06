@@ -484,7 +484,62 @@
 
             </div>
 
-            <footer style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.875rem;">
+            <!-- Model Evaluation Section -->
+            <div class="header-section" style="margin-top: 3rem;">
+                <h2>Model Evaluation Metrics</h2>
+                <p>Performance tracking for the Logistic Regression prediction engine.</p>
+            </div>
+
+            {% if metrics %}
+            <div class="insights-grid" style="grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                <!-- Accuracy -->
+                <div class="card-panel" style="padding: 1.5rem; text-align: center;">
+                    <i class="fa-solid fa-bullseye" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                    <h3 style="font-size: 0.875rem; color: var(--text-muted); font-weight: 500;">Accuracy</h3>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);">{{ (metrics.accuracy * 100)|round(1) }}%</div>
+                </div>
+                <!-- Precision -->
+                <div class="card-panel" style="padding: 1.5rem; text-align: center;">
+                    <i class="fa-solid fa-crosshairs" style="font-size: 2rem; color: var(--chart-teal); margin-bottom: 0.5rem;"></i>
+                    <h3 style="font-size: 0.875rem; color: var(--text-muted); font-weight: 500;">Precision</h3>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);">{{ (metrics.precision * 100)|round(1) }}%</div>
+                </div>
+                <!-- Recall -->
+                <div class="card-panel" style="padding: 1.5rem; text-align: center;">
+                    <i class="fa-solid fa-rotate-left" style="font-size: 2rem; color: var(--chart-purple); margin-bottom: 0.5rem;"></i>
+                    <h3 style="font-size: 0.875rem; color: var(--text-muted); font-weight: 500;">Recall</h3>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);">{{ (metrics.recall * 100)|round(1) }}%</div>
+                </div>
+                <!-- F1 Score -->
+                <div class="card-panel" style="padding: 1.5rem; text-align: center;">
+                    <i class="fa-solid fa-scale-balanced" style="font-size: 2rem; color: var(--chart-red); margin-bottom: 0.5rem;"></i>
+                    <h3 style="font-size: 0.875rem; color: var(--text-muted); font-weight: 500;">F1 Score</h3>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);">{{ (metrics.f1_score * 100)|round(1) }}%</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="insights-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="card-panel">
+                    <div class="panel-heading">
+                        <i class="fa-solid fa-table-cells"></i> Confusion Matrix
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="{{ url_for('static', filename='confusion_matrix.png') }}" alt="Confusion Matrix" style="width: 100%; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                    </div>
+                </div>
+
+                <div class="card-panel">
+                    <div class="panel-heading">
+                        <i class="fa-solid fa-chart-area"></i> ROC Curve
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="{{ url_for('static', filename='roc_curve.png') }}" alt="ROC Curve" style="width: 100%; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                    </div>
+                </div>
+            </div>
+
+            <footer style="text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.875rem;">
                 <p>&copy; 2026 Team 10 | Telecom Customer Churn Analysis</p>
             </footer>
         </div>
