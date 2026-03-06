@@ -427,88 +427,58 @@
             </div>
 
             <div class="insights-grid">
+                
+                <div class="card-panel">
+                    <div class="panel-heading">
+                        <i class="fa-solid fa-chart-pie"></i> Churn Distribution
+                    </div>
+                    <div>
+                        <img src="{{ url_for('static', filename='churn_distribution.png') }}" alt="Churn Distribution" style="width: 100%; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                    </div>
+                </div>
 
-                <!-- Chart: Churn by Contract Type -->
                 <div class="card-panel">
                     <div class="panel-heading">
                         <i class="fa-solid fa-file-signature"></i> Churn by Contract Type
                     </div>
                     <div>
-                        <div class="chart-row">
-                            <div class="chart-labels"><span>Month-to-month</span> <span>42.7%</span></div>
-                            <div class="bar-container">
-                                <div class="bar-fill c-red" style="width: 42.7%;"></div>
-                            </div>
-                        </div>
-                        <div class="chart-row">
-                            <div class="chart-labels"><span>One year</span> <span>11.2%</span></div>
-                            <div class="bar-container">
-                                <div class="bar-fill c-teal" style="width: 11.2%;"></div>
-                            </div>
-                        </div>
-                        <div class="chart-row">
-                            <div class="chart-labels"><span>Two year</span> <span>2.8%</span></div>
-                            <div class="bar-container">
-                                <div class="bar-fill c-blue" style="width: 2.8%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="summary-note">
-                        Short-term billing flexibility acts as a primary catalyst for telecom disconnection.
-                        Month-to-month users represent the highest risk group.
+                        <img src="{{ url_for('static', filename='churn_vs_contract.png') }}" alt="Churn vs Contract" style="width: 100%; border-radius: 8px; box-shadow: var(--shadow-sm);">
                     </div>
                 </div>
 
-                <!-- Chart: Tenure Buckets -->
                 <div class="card-panel">
                     <div class="panel-heading">
-                        <i class="fa-solid fa-calendar-days"></i> Churn Rate by Tenure
+                        <i class="fa-solid fa-calendar-days"></i> Churn vs Tenure
                     </div>
                     <div>
-                        <div class="chart-row">
-                            <div class="chart-labels"><span>0-12 Months (New)</span> <span>47.5%</span></div>
-                            <div class="bar-container">
-                                <div class="bar-fill c-red" style="width: 47.5%;"></div>
-                            </div>
-                        </div>
-                        <div class="chart-row">
-                            <div class="chart-labels"><span>13-36 Months</span> <span>29.1%</span></div>
-                            <div class="bar-container">
-                                <div class="bar-fill c-purple" style="width: 29.1%;"></div>
-                            </div>
-                        </div>
-                        <div class="chart-row">
-                            <div class="chart-labels"><span>36+ Months (Loyal)</span> <span>14.4%</span></div>
-                            <div class="bar-container">
-                                <div class="bar-fill c-blue" style="width: 14.4%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="summary-note">
-                        The highest risk of deserting occurs within the first year of acquisition, underscoring the
-                        necessity for robust early-retention initiatives.
+                        <img src="{{ url_for('static', filename='churn_vs_tenure.png') }}" alt="Churn vs Tenure" style="width: 100%; border-radius: 8px; box-shadow: var(--shadow-sm);">
                     </div>
                 </div>
 
-                <!-- Key Attributes -->
+                <div class="card-panel">
+                    <div class="panel-heading">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> Churn vs Monthly Charges
+                    </div>
+                    <div>
+                        <img src="{{ url_for('static', filename='churn_vs_monthlycharges.png') }}" alt="Churn vs Monthly Charges" style="width: 100%; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                    </div>
+                </div>
+
+                <div class="card-panel">
+                    <div class="panel-heading">
+                        <i class="fa-solid fa-wifi"></i> Churn vs Internet Service
+                    </div>
+                    <div>
+                        <img src="{{ url_for('static', filename='churn_vs_internetservice.png') }}" alt="Churn vs Internet Service" style="width: 100%; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                    </div>
+                </div>
+
                 <div class="card-panel" style="grid-column: 1 / -1;">
                     <div class="panel-heading">
-                        <i class="fa-solid fa-magnifying-glass-chart"></i> Critical Risk Attributes & Usage Patterns
+                        <i class="fa-solid fa-border-all"></i> Correlation Heatmap
                     </div>
-
-                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.5rem;">Key attributes
-                        connected closely with client disconnection:</p>
-
-                    <div class="driver-list">
-                        <span class="driver-badge high-risk"><i class="fa-solid fa-wifi"></i> Fiber Optic
-                            Internet</span>
-                        <span class="driver-badge high-risk"><i class="fa-solid fa-money-check"></i> High Monthly
-                            Charges</span>
-                        <span class="driver-badge high-risk"><i class="fa-solid fa-shield-halved"></i> No Online
-                            Security</span>
-                        <span class="driver-badge"><i class="fa-solid fa-person-cane"></i> Non-Senior Citizens</span>
-                        <span class="driver-badge"><i class="fa-solid fa-file-invoice-dollar"></i> Electronic
-                            Check</span>
+                    <div style="text-align: center;">
+                        <img src="{{ url_for('static', filename='correlation_heatmap.png') }}" alt="Correlation Heatmap" style="max-width: 800px; width: 100%; border-radius: 8px; box-shadow: var(--shadow-sm);">
                     </div>
                 </div>
 
