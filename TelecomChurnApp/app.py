@@ -86,8 +86,17 @@ def predict():
     except AttributeError:
         # Fallback if model doesn't support predict_proba
         probability = 0.85 if prediction == 1 else 0.15
-    
-    return render_template('result.html', prediction=int(prediction), probability=probability, customer_data=data)
+
+    # Risk segmentation based on churn probability
+    if probability >= 0.7:
+        risk_level = "High Risk"
+    elif probability >= 0.4:
+        risk_level = "Medium Risk"
+    else:
+        risk_level = "Low Risk"
+
+    return render_template('result.html', prediction=int(prediction), probability=probability,
+                           risk_level=risk_level, customer_data=data)
 
 if __name__ == '__main__':
     app.run(debug=True)

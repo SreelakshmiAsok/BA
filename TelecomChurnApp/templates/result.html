@@ -487,11 +487,20 @@
 </head>
 
 {% set prob_percent = (probability * 100) | round(1) %}
-{% if prob_percent < 30 %} {% set risk_theme="theme-low" %} {% set risk_label="Low Risk" %} {% set
-    risk_icon="fa-shield-check" %} {% elif prob_percent < 70 %} {% set risk_theme="theme-medium" %} {% set
-    risk_label="Medium Risk" %} {% set risk_icon="fa-triangle-exclamation" %} {% else %} {% set risk_theme="theme-high"
-    %} {% set risk_label="High Risk" %} {% set risk_icon="fa-circle-exclamation" %} {% endif %} <body
-    class="{{ risk_theme }}">
+{% if risk_level == "High Risk" %}
+  {% set risk_theme = "theme-high" %}
+  {% set risk_icon = "fa-circle-exclamation" %}
+  {% set risk_desc = "Immediate retention action required" %}
+{% elif risk_level == "Medium Risk" %}
+  {% set risk_theme = "theme-medium" %}
+  {% set risk_icon = "fa-triangle-exclamation" %}
+  {% set risk_desc = "Monitor closely and offer incentives" %}
+{% else %}
+  {% set risk_theme = "theme-low" %}
+  {% set risk_icon = "fa-shield-check" %}
+  {% set risk_desc = "Customer is likely to stay" %}
+{% endif %}
+<body class="{{ risk_theme }}">
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="brand">
@@ -552,8 +561,9 @@
                     </div>
 
                     <div class="risk-badge">
-                        <i class="fa-solid {{ risk_icon }}"></i> {{ risk_label }}
+                        <i class="fa-solid {{ risk_icon }}"></i> {{ risk_level }}
                     </div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.75rem;">{{ risk_desc }}</p>
                 </div>
 
                 <!-- Customer Summary -->
@@ -614,7 +624,7 @@
                                     grievances.</p>
                             </div>
                         </div>
-                        {% elif prob_percent >= 30 %}
+                        {% elif prob_percent >= 40 %}
                         <div class="strategy-item">
                             <div class="strategy-icon" style="color: var(--warning); background: #fef3c7;"><i
                                     class="fa-solid fa-box-open"></i></div>
