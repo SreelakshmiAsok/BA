@@ -26,7 +26,18 @@ def insights():
             metrics = json.load(f)
     except FileNotFoundError:
         metrics = None
-    return render_template('insights.html', metrics=metrics)
+
+    # Load model comparison data
+    comparison_models = []
+    try:
+        import csv
+        with open('model_comparison.csv', 'r') as f:
+            reader = csv.DictReader(f)
+            comparison_models = list(reader)
+    except FileNotFoundError:
+        pass
+
+    return render_template('insights.html', metrics=metrics, comparison_models=comparison_models)
 
 @app.route('/segmentation')
 def segmentation():

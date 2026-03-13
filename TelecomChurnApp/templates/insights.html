@@ -340,16 +340,51 @@
         }
 
         @keyframes slideUpFade {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Model Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .comparison-table thead tr { background: var(--primary-light); color: var(--primary); }
+        .comparison-table th {
+            padding: 0.875rem 1.25rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .comparison-table td {
+            padding: 0.95rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        .comparison-table tbody tr:last-child td { border-bottom: none; }
+        .comparison-table tbody tr:hover { background: var(--bg-base); }
+        .comparison-table tbody tr.best-row { background: #f0fdf4; }
+        .comparison-table tbody tr.best-row td { font-weight: 600; }
+        .model-name-cell { display: flex; align-items: center; gap: 0.6rem; }
+        .best-badge {
+            background: #d1fae5; color: #065f46; border: 1px solid #10b981;
+            font-size: 0.68rem; font-weight: 700; padding: 0.18rem 0.55rem;
+            border-radius: 50px; text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .metric-bar-wrap { display: flex; align-items: center; gap: 0.6rem; min-width: 140px; }
+        .metric-bar-track {
+            flex: 1; height: 6px; background: var(--border-color);
+            border-radius: 4px; overflow: hidden;
+        }
+        .metric-bar-fill {
+            height: 100%; border-radius: 4px;
+            animation: slideFill 1s ease-out forwards;
+            transform-origin: left;
+        }
+        .metric-val { font-size: 0.875rem; font-weight: 600; min-width: 42px; text-align: right; }
 
         @media (max-width: 1024px) {
             .sidebar {
@@ -487,7 +522,7 @@
             <!-- Model Evaluation Section -->
             <div class="header-section" style="margin-top: 3rem;">
                 <h2>Model Evaluation Metrics</h2>
-                <p>Performance tracking for the Logistic Regression prediction engine.</p>
+                <p>Performance of the <strong>{{ metrics.model if metrics and metrics.model else 'selected' }}</strong> model — auto-selected as the best performer by F1 Score.</p>
             </div>
 
             {% if metrics %}
@@ -538,6 +573,70 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Model Comparison Section -->
+            {% if comparison_models %}
+            <div class="header-section" style="margin-top: 3rem;">
+                <h2>Model Comparison</h2>
+                <p>All three models were trained on the same SMOTE-balanced dataset and evaluated on the held-out test set. The best model by F1 Score is highlighted and used for predictions.</p>
+            </div>
+            <div class="card-panel" style="padding: 0; overflow: hidden; opacity: 1;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Accuracy</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1 Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set best_f1 = comparison_models | map(attribute='F1 Score') | map('float') | max %}
+                        {% for row in comparison_models %}
+                        {% set is_best = (row['F1 Score'] | float) == best_f1 %}
+                        <tr class="{% if is_best %}best-row{% endif %}">
+                            <td>
+                                <div class="model-name-cell">
+                                    {% if is_best %}
+                                        <i class="fa-solid fa-trophy" style="color:#f59e0b;"></i>
+                                    {% else %}
+                                        <i class="fa-solid fa-robot" style="color:var(--text-muted);"></i>
+                                    {% endif %}
+                                    {{ row['Model'] }}
+                                    {% if is_best %}<span class="best-badge">Best</span>{% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="metric-bar-wrap">
+                                    <div class="metric-bar-track"><div class="metric-bar-fill c-blue" style="width:{{ (row['Accuracy']|float*100)|round(1) }}%"></div></div>
+                                    <span class="metric-val">{{ (row['Accuracy']|float*100)|round(1) }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="metric-bar-wrap">
+                                    <div class="metric-bar-track"><div class="metric-bar-fill c-teal" style="width:{{ (row['Precision']|float*100)|round(1) }}%"></div></div>
+                                    <span class="metric-val">{{ (row['Precision']|float*100)|round(1) }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="metric-bar-wrap">
+                                    <div class="metric-bar-track"><div class="metric-bar-fill c-purple" style="width:{{ (row['Recall']|float*100)|round(1) }}%"></div></div>
+                                    <span class="metric-val">{{ (row['Recall']|float*100)|round(1) }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="metric-bar-wrap">
+                                    <div class="metric-bar-track"><div class="metric-bar-fill c-red" style="width:{{ (row['F1 Score']|float*100)|round(1) }}%"></div></div>
+                                    <span class="metric-val">{{ (row['F1 Score']|float*100)|round(1) }}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
 
             <footer style="text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.875rem;">
                 <p>&copy; 2026 Team 10 | Telecom Customer Churn Analysis</p>
