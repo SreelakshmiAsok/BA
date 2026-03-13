@@ -26,7 +26,18 @@ def insights():
             metrics = json.load(f)
     except FileNotFoundError:
         metrics = None
-    return render_template('insights.html', metrics=metrics)
+
+    # Load model comparison data
+    comparison_models = []
+    try:
+        import csv
+        with open('model_comparison.csv', 'r') as f:
+            reader = csv.DictReader(f)
+            comparison_models = list(reader)
+    except FileNotFoundError:
+        pass
+
+    return render_template('insights.html', metrics=metrics, comparison_models=comparison_models)
 
 @app.route('/segmentation')
 def segmentation():
@@ -86,8 +97,17 @@ def predict():
     except AttributeError:
         # Fallback if model doesn't support predict_proba
         probability = 0.85 if prediction == 1 else 0.15
-    
-    return render_template('result.html', prediction=int(prediction), probability=probability, customer_data=data)
+
+    # Risk segmentation based on churn probability
+    if probability >= 0.7:
+        risk_level = "High Risk"
+    elif probability >= 0.4:
+        risk_level = "Medium Risk"
+    else:
+        risk_level = "Low Risk"
+
+    return render_template('result.html', prediction=int(prediction), probability=probability,
+                           risk_level=risk_level, customer_data=data)
 
 if __name__ == '__main__':
     app.run(debug=True)

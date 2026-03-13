@@ -3,13 +3,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, roc_curve, auc
+from imblearn.over_sampling import SMOTE
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pickle
 import os
 import json
 
-# Load dataset
+# Load datasetgit 
 df = pd.read_csv("WA_Fn-UseC_-Telco-Customer-Churn.csv")
 
 # Clean
@@ -32,9 +33,24 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Train Model
-model = LogisticRegression(max_iter=1000)
-model.fit(X_train_scaled, y_train)
+# --- Class Distribution Before SMOTE ---
+print("\nClass distribution BEFORE SMOTE:")
+print(y_train.value_counts().rename({0: 'No Churn (0)', 1: 'Churn (1)'}).to_string())
+
+# Apply SMOTE to training set ONLY (after scaling to avoid data leakage)
+smote = SMOTE(random_state=42)
+X_train_resampled, y_train_resampled = smote.fit_resample(X_train_scaled, y_train)
+
+# --- Class Distribution After SMOTE ---
+import collections
+after_counts = collections.Counter(y_train_resampled)
+print("\nClass distribution AFTER SMOTE:")
+print(f"  No Churn (0): {after_counts[0]}")
+print(f"  Churn    (1): {after_counts[1]}")
+
+# Train Model on balanced data
+model = LogisticRegression(max_iter=1000, solver='saga')
+model.fit(X_train_resampled, y_train_resampled)
 
 # --- Model Evaluation ---
 y_pred = model.predict(X_test_scaled)
