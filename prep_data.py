@@ -1,3 +1,9 @@
+# prep_data.py - Telecom Customer Churn Model Training Script
+# Loads and preprocesses the Telco Customer Churn dataset (encoding, scaling, SMOTE balancing).
+# Trains a Logistic Regression model and evaluates it with accuracy, precision, recall, and F1 score.
+# Generates and saves Confusion Matrix and ROC Curve plots to the static assets folder.
+# Exports the trained model, scaler, feature columns, and metrics for use by the Flask web app.
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
