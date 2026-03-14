@@ -1,3 +1,9 @@
+# eda_analysis.py - Exploratory Data Analysis (EDA) for Telecom Churn Dataset
+# Loads the Telco Customer Churn CSV and performs basic preprocessing (drops ID, handles nulls).
+# Generates 6 visualisation plots: churn distribution, churn vs contract/tenure/monthly charges/internet service,
+# and a correlation heatmap of numeric features.
+# All plots are saved as PNG files to the static/ directory for display in the web dashboard.
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns

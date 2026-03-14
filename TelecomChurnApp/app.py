@@ -1,3 +1,9 @@
+# app.py - Flask Web Application for Telecom Churn Prediction
+# Serves the main prediction UI and loads the pre-trained Logistic Regression model artifacts.
+# Handles form submissions, scales input data, predicts churn probability, and segments risk level.
+# Provides routes for the home predictor, insights dashboard, customer segmentation, and settings pages.
+# Reads metrics.json and model_comparison.csv to display model performance data on the Insights page.
+
 from flask import Flask, request, render_template
 import pickle
 import pandas as pd
