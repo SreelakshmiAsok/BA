@@ -8,15 +8,19 @@ from flask import Flask, request, render_template
 import pickle
 import pandas as pd
 import numpy as np
+import os
 
 app = Flask(__name__)
 
+# Use absolute paths relative to this file so it works on any server
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Load artifacts
-with open('churn_model.pkl', 'rb') as f:
+with open(os.path.join(BASE_DIR, 'churn_model.pkl'), 'rb') as f:
     model = pickle.load(f)
-with open('scaler.pkl', 'rb') as f:
+with open(os.path.join(BASE_DIR, 'scaler.pkl'), 'rb') as f:
     scaler = pickle.load(f)
-with open('columns.pkl', 'rb') as f:
+with open(os.path.join(BASE_DIR, 'columns.pkl'), 'rb') as f:
     train_columns = pickle.load(f)
 
 @app.route('/')
@@ -28,7 +32,7 @@ import json
 @app.route('/insights')
 def insights():
     try:
-        with open('metrics.json', 'r') as f:
+        with open(os.path.join(BASE_DIR, 'metrics.json'), 'r') as f:
             metrics = json.load(f)
     except FileNotFoundError:
         metrics = None
@@ -37,7 +41,7 @@ def insights():
     comparison_models = []
     try:
         import csv
-        with open('model_comparison.csv', 'r') as f:
+        with open(os.path.join(BASE_DIR, 'model_comparison.csv'), 'r') as f:
             reader = csv.DictReader(f)
             comparison_models = list(reader)
     except FileNotFoundError:
