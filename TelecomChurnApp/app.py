@@ -23,11 +23,16 @@ with open(os.path.join(BASE_DIR, 'scaler.pkl'), 'rb') as f:
 with open(os.path.join(BASE_DIR, 'columns.pkl'), 'rb') as f:
     train_columns = pickle.load(f)
 
+import json
+
 @app.route('/')
 def home():
-    return render_template('index.html')
-
-import json
+    try:
+        with open(os.path.join(BASE_DIR, 'metrics.json'), 'r') as f:
+            metrics = json.load(f)
+    except FileNotFoundError:
+        metrics = None
+    return render_template('index.html', metrics=metrics)
 
 @app.route('/insights')
 def insights():
